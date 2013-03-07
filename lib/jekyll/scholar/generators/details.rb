@@ -16,13 +16,8 @@ module Jekyll
 
         liquidify(entry)
       end
-	  
-	  def link(path)
-	    File.symlink(path'/'+entry.title.to_s+'',path+"/"+entry.key)
-	  end
 
-
-      private
+	  private
 
       def liquidify(entry)
         data['entry'] = {}
@@ -35,10 +30,11 @@ module Jekyll
         end
 
         data['entry']['bibtex'] = entry.to_s
-        data['entry']['bibtex_noabs'] = entry.to_s.sub(%r{^[\s]*abstract[\s]*=[\s]*.*$\n},"");
+        data['entry']['bibtex_simple'] = entry.to_s.sub(%r{^[\s]*abstract[\s]*=[\s]*.*$\n},"").sub(%r{^[\s]*date-[a-z]+[\s]*=[\s]*.*$\n},"")
+		data['entry']['pdf'] = File.join(pdfs_path,entry.title.to_s+".pdf")
       end
 
-		  
+
     end
 
     class DetailsGenerator < Generator
@@ -57,8 +53,20 @@ module Jekyll
             details = Details.new(site, site.source, File.join('', details_path), entry)
             details.render(site.layouts, site.site_payload)
             details.write(site.dest)
-			details.link(details_path);
 
+			begin
+			  srcfile = File.join(pdfs_path,entry.title.to_s+".pdf")
+			  destfile = File.join(details_path,"pdf",entry.key+".pdf")
+
+			  if File.exists?(destfile)
+			  	FileUtils.rm(destfile)
+			  end
+
+			  FileUtils.copy(File.expand_path(srcfile),destfile)
+
+			rescue Exception => e
+		  	  puts "ERROR: Unable to copy file: "+e.message
+			end
             site.pages << details
           end
 

@@ -65,6 +65,10 @@ module Jekyll
         config['details_dir']
       end
 
+	  def pdfs_path
+		config['pdfs_dir']
+  	  end
+
       def cite(key)
         entry = bibliography[key]
 
@@ -79,7 +83,7 @@ module Jekyll
       rescue
         "(#{key})"
       end
-      
+
       def cite_details(key, text)
         if bibliography.key?(key)
           link_to details_link_for(bibliography[key]), text || config['details_link']

@@ -14,12 +14,13 @@ module Jekyll
       details_dir    bibliography
       details_layout bibtex.html
       details_link   Details
-      
+      pdfs_dir		 pdfs
+
       bibliography_class bibliography
       details_link_class details
 
     	query  @*
-      	
+
     }].freeze
 
     class << self
