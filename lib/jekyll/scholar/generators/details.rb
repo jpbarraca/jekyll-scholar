@@ -16,6 +16,11 @@ module Jekyll
 
         liquidify(entry)
       end
+	  
+	  def link(path)
+	    File.symlink(path'/'+entry.title.to_s+'',path+"/"+entry.key)
+	  end
+
 
       private
 
@@ -30,13 +35,15 @@ module Jekyll
         end
 
         data['entry']['bibtex'] = entry.to_s
+        data['entry']['bibtex_noabs'] = entry.to_s.sub(%r{^[\s]*abstract[\s]*=[\s]*.*$\n},"");
       end
 
+		  
     end
 
     class DetailsGenerator < Generator
       include Scholar::Utilities
-      
+
       safe true
       priority :high
 
@@ -50,6 +57,7 @@ module Jekyll
             details = Details.new(site, site.source, File.join('', details_path), entry)
             details.render(site.layouts, site.site_payload)
             details.write(site.dest)
+			details.link(details_path);
 
             site.pages << details
           end

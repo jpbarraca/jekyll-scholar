@@ -19,7 +19,7 @@ module Jekyll
       details_link_class details
 
     	query  @*
-	
+      	
     }].freeze
 
     class << self
